@@ -22,7 +22,7 @@ def mild_explosions(planet_lst,planet_rocks):
 
 
 
-def amazing_explosions(planet_lst,planet_rocks):
+def amazing_explosions(planet_lst,planet_rocks,planet_fuel):
     global amazing_count
     planet_position = 0
     random = (r.randint(1,len(planet_lst)*5))
@@ -37,8 +37,10 @@ def amazing_explosions(planet_lst,planet_rocks):
             planet_rocks[i] = planet_rocks[i] + planet_rocks[k]
     if planet_position > 0:
         del planet_rocks[planet_position-1]
-    return [planet_rocks,planet_lst]
+        del planet_fuel[planet_position-1]
+    return [planet_rocks,planet_lst,planet_fuel]
 ##Amazing explosions inputs the planet number list and the planet rocks list. It returns a list of lists.
 ##A new list for the planet rocks after the explosion occurs, and a new list for the number of planets.
 ##Input and output does not include planet 0 as the explosions don't affect it.
 ##Global variable for amazing_count so that we can count how many times the amazing_explosion occurs in the game.
+
