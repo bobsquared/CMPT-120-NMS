@@ -1,4 +1,4 @@
-#display_board
+
 
 
 #### CMPT 120
@@ -54,9 +54,6 @@ def read_string_list_from_file(the_file):
 
 
 
-
-
-
 def create_lists_board(listStrings):
     
     '''
@@ -85,10 +82,6 @@ def create_lists_board(listStrings):
     return [civlevel,fuel,rocks]
 
 
-
-
-
-
             
             
 def display_board(planet_number,lst,pos):
@@ -104,8 +97,8 @@ def display_board(planet_number,lst,pos):
             result += "       <===== Astronaught Position\n"
         else:
             result += "\n"
-    
-    return result
+    print (result)
+    return 
 
 
 
@@ -126,7 +119,7 @@ def show_board(title):
     print ("\n The board at this point contains...")
 
     # your code...
-    return display_board(planet_number,var,pos)
+    return display_board(planet_number,listOfString,pos)
 
 
     
@@ -150,44 +143,108 @@ def convert_to_list(a):
     return res
 
 
-
-
-
-
-def planet_number(num):
+def planet_num(a):
     res = []
-    for i in range(len(num)):
+    for i in range(len(a)):
         res += [i]
     return res
 
+
+def roll_die(pos,planet_number):
+    rand = r.randint(1,6)
+    res = rand + pos
+    while res >= len(planet_number):
+        res -= len(planet_number)
+    print("the die was... " + str(rand))
+    print("the previous position was... " + str(pos))
+    print("and the next position is... " + str(res))
+    return res
+
+
+
+def replace_rocks(planet_rocks,listOfString):
+    for i in range(len(planet_rocks)):
+        listOfString[i][2] = planet_rocks[i]
+    listOfString[0] = [0,0,0]
+    return
+            
+def mild_explosions(listOfString,planet_lst,planet_rocks):
+    global mild_count
+    planet_position = 0
+    random = (r.randint(1,len(planet_lst)*5))
+    for i in range(len(planet_lst)-1):
+        if (random == (i+1)):
+            print("Oooooh! A mild or amazing explosion is happening in planet # " + str(i+1) + " \n the board will have more rock specimens!")
+            mild_count += 1
+            planet_position = (i+1)
+    for i in range(planet_position):
+        for k in range(planet_position,i,-1):
+            planet_rocks[i] = planet_rocks[i] + planet_rocks[k]
+    replace_rocks(planet_rocks,listOfString)
+    return planet_rocks
+
+def amazing_explosions(listOfString,planet_lst,planet_fuel,planet_rocks):
+    global amazing_count
+    planet_position = 0
+    random = (r.randint(1,len(planet_lst)*5))
+    for i in range(len(planet_lst)-1):
+        if (random == (i+1)):
+            print("Oooooh! A mild or amazing explosion is happening in planet # " + str(i+1) + " \n the board will have more rock specimens!")
+            amazing_count += 1
+            planet_position = (i+1)
+    for i in range(planet_position):
+        for k in range(planet_position,i,-1):
+            planet_rocks[i] = planet_rocks[i] + planet_rocks[k]
+    replace_rocks(planet_rocks,listOfString)
+    if planet_position > 0:
+        del planet_rocks[planet_position]
+        del listOfString[planet_position]
+        planet_lst = planet_num(listOfString)
+        
+    return [planet_rocks,planet_lst]
+
+
+
+
 #-----------------------------Top Level--------------------------#8========D
+import random as r
 
-
-
-
-
-print("Clouds the best")
-
-
+amazing_count = 0
+mild_count = 0
 
 pos = 0
-title = ""
 listStrings = read_string_list_from_file("planetsData1.txt")
-print(listStrings[1])    
-var = (convert_to_list(listStrings))
-planet_number = planet_number(var)
-print(show_board(title))
-print(var)
-var1 = create_lists_board(var)
-print (var1[0])
-print (var1[1])
-print (var1[2])
+listOfString = convert_to_list(listStrings)
+
+planet_number = planet_num(listOfString)
+planet_civ_level = (create_lists_board(listOfString))[0]
+planet_fuel = (create_lists_board(listOfString))[1]
+planet_rocks = (create_lists_board(listOfString))[2]
+i = 0
 
 
 
+##UNQUOTE THIS PART TO TEST AMAZING EXPLOSIONS
+##CONTROL C TO STOP THE LOOP
+'''
+while i<1:
+    show_board("lol")
+    planet = (amazing_explosions(listOfString,planet_number,planet_fuel,planet_rocks))
+    planet_rocks = planet[0]
+    planet_number = planet[1]
+    pos = roll_die(pos,planet_number)
+    print(planet_number)
+'''
 
-
-
+##UNQUOTE THIS PART TO TEST MILD EXPLOSIONS
+##CONTROL C TO STOP THE LOOP
+'''
+while i<1:
+    show_board("lol")
+    planet_rocks = (mild_explosions(listOfString,planet_number,planet_rocks))
+    pos = roll_die(pos,planet_number)
+    print(planet_number)
+'''
 
 
 

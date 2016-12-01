@@ -1,17 +1,18 @@
 ## Explosions for Final assignment
 
-def mild_explosions(planet_lst,planet_rocks):
+def mild_explosions(listOfString,planet_lst,planet_rocks):
     global mild_count
     planet_position = 0
     random = (r.randint(1,len(planet_lst)*5))
-    for i in range(len(planet_lst)):
+    for i in range(len(planet_lst)-1):
         if (random == (i+1)):
             print("Oooooh! A mild or amazing explosion is happening in planet # " + str(i+1) + " \n the board will have more rock specimens!")
             mild_count += 1
             planet_position = (i+1)
     for i in range(planet_position):
-        for k in range(planet_position - 1,i,-1):
+        for k in range(planet_position,i,-1):
             planet_rocks[i] = planet_rocks[i] + planet_rocks[k]
+    replace_rocks(planet_rocks,listOfString)
     return planet_rocks
 ##Mild explosions inputs the planet number list and the planet rocks list. It returns a new list for the planet rocks after the mild explosion occurs.
 ##Input and output does not include planet 0 as the explosions don't affect it.
@@ -22,23 +23,24 @@ def mild_explosions(planet_lst,planet_rocks):
 
 
 
-def amazing_explosions(planet_lst,planet_rocks,planet_fuel):
+def amazing_explosions(listOfString,planet_lst,planet_fuel,planet_rocks):
     global amazing_count
     planet_position = 0
     random = (r.randint(1,len(planet_lst)*5))
-    for i in range(len(planet_lst)):
+    for i in range(len(planet_lst)-1):
         if (random == (i+1)):
             print("Oooooh! A mild or amazing explosion is happening in planet # " + str(i+1) + " \n the board will have more rock specimens!")
             amazing_count += 1
             planet_position = (i+1)
-            del planet_lst[-1]
     for i in range(planet_position):
-        for k in range(planet_position - 1,i,-1):
+        for k in range(planet_position,i,-1):
             planet_rocks[i] = planet_rocks[i] + planet_rocks[k]
+    replace_rocks(planet_rocks,listOfString)
     if planet_position > 0:
-        del planet_rocks[planet_position-1]
-        del planet_fuel[planet_position-1]
-    return [planet_rocks,planet_lst,planet_fuel]
+        del planet_rocks[planet_position]
+        del listOfString[planet_position]
+        planet_lst = planet_num(listOfString)      
+    return [planet_rocks,planet_lst]
 ##Amazing explosions inputs the planet number list and the planet rocks list. It returns a list of lists.
 ##A new list for the planet rocks after the explosion occurs, and a new list for the number of planets.
 ##Input and output does not include planet 0 as the explosions don't affect it.
