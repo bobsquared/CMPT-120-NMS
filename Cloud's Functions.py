@@ -99,7 +99,7 @@ def encounter(fuel_amount, civ_lvl, position, fuel_list, alienlvl_list):
             print("\n\nThe astronaut now has " + fuel_amount + " fuel litres.")
 
         #This case is where the astronaut has a draw
-        elif civ_lvl = alien_lvl:
+        elif civ_lvl == alien_lvl:
             print("\nOh well... the astronaut is equally as civilized as the aliens")
             loss_gain = r.randint(1, (fuel_amount/2))
             print("He lost " + str(loss_gain) + " fuel litres.")
@@ -153,7 +153,7 @@ def turn(name, civ_lvl, position, fuel_amount, max_turns, mild_expl, amaz_expl, 
         rock_collection(position, rock_counter, rock_list)
         
         turn_counter += 1
-
+    
     return
 
 
@@ -165,4 +165,5 @@ def turn(name, civ_lvl, position, fuel_amount, max_turns, mild_expl, amaz_expl, 
 
 import random as r
 
+start_game()
 
