@@ -1,11 +1,18 @@
 def roll_die(pos,planet_number):
+    choose = input("(d/u) : ")
     rand = r.randint(1,6)
     res = rand + pos
-    while res >= len(planet_number):
-        res -= len(planet_number)
-    print("the die was... " + str(rand))
-    print("the previous position was... " + str(pos))
-    print("and the next position is... " + str(res))
+    if choose == "d":
+        while res >= len(planet_number):
+            res -= len(planet_number)
+        print("the die was... " + str(rand))
+        print("the previous position was... " + str(pos))
+        print("and the next position is... " + str(res))
+    elif choose == "u":
+        lol = input("planet")
+        res = int(lol)
+    else:
+        roll_die(pos,planet_number)
     return res
 
 #-------------------------------------------------------
