@@ -526,13 +526,12 @@ while i<150:
 
 
 while i<1:
-    clearBoard()
     show_board("lol")
     planet_rocks = (mild_explosions(listOfString,planet_number,planet_rocks))
     pos = roll_die(pos,planet_number)
+    clearBoard()
     drawBoard(listOfString,pos,50)
     print(planet_number)
-    clearBoard()
 
 
 
