@@ -1,4 +1,4 @@
-import random as r
+
 
 def start_game(): #Starts the game
     yes_no = input("Do you want play? (y/n): ")
@@ -59,15 +59,18 @@ def game_info():  #The initial 5 questions about the game collected all in one f
 
 
 def movement(planet_list, position):
-    selection = input("Would you like to roll the die, or select your next position? (d/u): ")
+        #This part asks rhe user if he would like to roll the die or choose the noext position
+    selection = input("\nWould you like to roll the die, or select your next position? (d/u): ")
     while (selection.lower() != "d" and selection.lower() != "u"):
         selection = input("What you typed is not d or u. Please try again: ")
+        #This part is the dice rol
     if selection.lower() == d:
         dice_roll = r.randint(1, 6)
         print("\nThe die was... " + str(dice_roll))
         print("The previous position was... " + str(position))
         position = (position + r.randint(1, 6)) % len(planet_list)
         print("and the next position is... " + str(position))
+        #This part is asking the user where he wants to go with verification of inputs
     else:
         position = input("\nWhich planet would you like to go to next? (0 - " + str(len(planet_list)) + "): ")
         while (position.isdigit() == False or int(position) < 0 or int(position) > len(planet_list)):
@@ -79,25 +82,57 @@ def movement(planet_list, position):
     return position
 
 
-def encounter(fuel_amount, civ_lvl, position, localList):
-    alien_lvl = str(localList[position][0])
+def encounter(fuel_amount, civ_lvl, position, fuel_list, alienlvl_list):
+    alien_lvl = str(alienlvl_list[position])
+        #This section is executed if there are aliens on the planet
     if alien_lvl > 0:
         print("There are aliens on this planet! Their civilization level is " + alien_lvl)
+
+        #This case is where the astronaut wins
         if civ_lvl > alien_lvl:
             print("\nGreat! The astronaut is more civilized than the aliens!")
-            loss_gain = r.randint(1, localList[position][1])
-            localList[position][1] += loss_again
+            loss_gain = r.randint(1, fuel_list[position])
+            fuel_list[position] += loss_again
+            print("He won " + str(loss_gain) + " fuel litres.")
+            print("Planet " + str(position) + " now has " + str(fuel_list[position]) + " litres.")
+            fuel_amount += loss_gain
+            print("\n\nThe astronaut now has " + fuel_amount + " fuel litres.")
+
+        #This case is where the astronaut has a draw
         elif civ_lvl = alien_lvl:
             print("\nOh well... the astronaut is equally as civilized as the aliens")
-            loss_gain = 0 - r.randint(1, (fuel_amount/2))
+            loss_gain = r.randint(1, (fuel_amount/2))
+            print("He lost " + str(loss_gain) + " fuel litres.")
+            fuel_amount -= loss_gain
+            print("\n\nThe astronaut now has " + fuel_amount + " fuel litres.")
+
+        #This case is where the astronaut loses
         else:
             print("\nOh no! The astronaut is less civilized than the aliens.")
-            loss_gain = 0 - r.randint(1, fuel_amount)
-    fuel_amount += loss_gain
+            loss_gain = r.randint(1, fuel_amount)
+            print("He lost " + str(loss_gain) + " fuel litres.")
+            fuel_amount -= loss_gain
+            print("\n\nThe astronaut now has " + fuel_amount + " fuel litres.")
+    #This section of code executes if there are not aliens on the planet
+    else:
+        print("\nThere are no aliens on this planet.")
+        loss_gain = r.randint(1, fuel_list[position])
+        fuel_list[position] += loss_again
+        print("He won " + str(loss_gain) + " fuel litres.")
+        print("Planet " + str(position) + " now has" + str(fuel_list[position]) + " litres.")
+        fuel_amount += loss_gain
+        print("\n\nThe astronaut now has " + fuel_amount + " fuel litres.")
+
     return fuel_amount
-'''
-def rock_collection(position,):
-'''
+
+def rock_collection(position, rock_counter, rock_list):
+    rock_counter.append(round(rock_list[position]/3))
+    print("\nYay! The astronaut collected " + str(round(rock_list[position]/3)) + " rocks!")
+    print("His rock collection is now " + rock_counter)
+    print("The planet " + str(position) + " now has " + str(rock_list[position] - round(rock_list[position]/3)) + " rocks.")
+
+    return rock_counter
+    
 
 
 
@@ -110,8 +145,16 @@ def turn(name, civ_lvl, position, fuel_amount, max_turns, mild_expl, amaz_expl, 
         print("\nThe astronaut " + name + "'s civilation level is " + str(civ_lvl))
         print("Right now, he is in position " + str(position))
         print("and has " + str(fuel_amount) + " fuel litres")
-        print("and collected until and including this turn" + rock_counter + "rock specimens") #ADD THE FUNCTION FOR ROCKS
-        print("He is alive and ready to move")
+        print("and collected until and including this turn" + rock_counter + "rock specimens")
+        print("He is alive and ready to move!")
+
+        movement(planet_list, position)
+
+        rock_collection(position, rock_counter, rock_list)
+        
+        turn_counter += 1
+
+    return
 
 
 
@@ -120,6 +163,6 @@ def turn(name, civ_lvl, position, fuel_amount, max_turns, mild_expl, amaz_expl, 
 
 #-----------------------------------------------------------------Top Level--------------------------------------------------------------------------------------#
 
-
+import random as r
 
 
