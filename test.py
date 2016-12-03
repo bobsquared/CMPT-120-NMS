@@ -63,14 +63,14 @@ def movement(planet_number, position):
         print("and the next position is... " + str(res))
         #This part is asking the user where he wants to go with verification of inputs
     else:
-        position = input("\nWhich planet would you like to go to next? (0 - " + str(len(planet_number)-1) + "): ")
-        while (position.isdigit() == False or int(position) < 0 or int(position) > len(planet_number)-1):
-            if position.isdigit() == False:
-                position = input("That is not a positive integer. Please try again: ")
+        res = input("\nWhich planet would you like to go to next? (0 - " + str(len(planet_number)-1) + "): ")
+        while (res.isdigit() == False or int(res) < 0 or int(res) > len(planet_number)-1):
+            if res.isdigit() == False:
+                res = input("That is not a positive integer. Please try again: ")
             else:
-                position = input("That value is not within the valid range. Please try again: ")
-        print("\nOkay! Travelling to planet " + str(position))
-    position = int(position)
+                res = input("That value is not within the valid range. Please try again: ")
+        print("\nOkay! Travelling to planet " + str(res))
+    res = int(res)
     return res
 
 
@@ -141,6 +141,80 @@ def turn(name, civ_lvl, position, fuel_amount, max_turns, mild_expl, amaz_expl, 
     print("He is alive and ready to move!")
     return
 
+def end_of_game(name, civ_lvl, position, fuel_amount, rock_counter, max_turns, turn_counter, python_planet):
+    show_board(" end of game")
+    print("Showing astronaut ... end of game")
+    print("\nThe astronaut " + name + " has civilization level " + str(civ_lvl))
+    print("He is in position: " + str(position))
+    print("and currently has: " + str(fuel_amount) + " fuel litres")
+    print("and collected during the whole game" + str(rock_counter) + " rock specimens.")
+    if turn_counter == int(max_turns):
+        print("So... he is very alive!")
+        print("but he cannot move anymore since the game ended!")
+    elif int(fuel_amount) == 0:
+        print("He is stranded since he has no fuel!")
+    elif position == python_planet:
+        print("So... he is very alive!")
+        print("And he also reached Python Planet,so he won!!!")
+    yes_no = input("\nDo you want to play again? (y/n): ")
+    while (yes_no.lower() != "y" and yes_no.lower() != "n"):
+        yes_no = input("\nWhat you typed was not y or n. Please try again: ")
+    if yes_no.lower() == "y":
+        print("Let's get started again then.")
+        turn_counter = 0
+        fuel_amount = 1
+        position = 0
+        rock_counter = []
+    return yes_no, turn_counter, fuel_amount, position, rock_counter
+
+def end_of_all_games(game_count, win_count):
+    print("\nThe user played " + str(game_count) + " games in total")
+    print("of those, the astonaut won " + str(win_count))
+    print("To conclude, the program will do a conversion from binary to decimal!")
+    print("taking as source the  list of rock specimens in the last game board")
+    return
+
+def binaryList(lis):
+    print("\nList with rock specimens: " + str(lis))
+    newList = []
+    for i in range(len(lis)):
+        newList.append(lis[i]%2)
+    print("Corresponding binary: " + str(newList))
+    return newList
+
+def toBase10(lis):
+    num = 0
+    negative = False
+    if(lis[0] == 1):
+        negative = True
+        for i in range(len(lis)):
+            if(lis[i] == 1):
+                lis[i] = 0
+            else:
+                lis[i] = 1
+        addOne(lis)
+    for i in range(len(lis)):
+        digit = lis[len(lis)-1-i]
+        newDigit = digit * m.pow(2,i)
+        num += newDigit
+    if(negative):
+        num = 0 - num
+    return int(num)
+
+def addOne(lis):
+    i = len(lis) - 1
+    done = False
+    while(not done):
+        if(lis[i] == 0):
+            lis[i] = 1
+        else:
+            lis[i] = 0
+        i -= 1
+        if((i < 0) or (lis[i + 1] == 1)):
+            done = True
+    return lis
+
+
 def read_string_list_from_file(the_file):
     '''
     CODE PROVIDED TO INCORPORATE
@@ -182,7 +256,13 @@ def read_string_list_from_file(the_file):
         
     return localList
 
-
+def file():
+    file = input("\nType the name of the board file including '.txt' or type d for default :")
+    if file.lower() == "d":
+        res = "planetsData1.txt"
+    else:
+        res = file
+    return res
 
 def create_lists_board(listStrings):
     
@@ -243,7 +323,7 @@ def show_board(title):
     #before turn number xxx, etc
     
     print ("\nShowing board... " + title)
-    print ("\n The board at this point contains...")
+    print ("\n The board at this point contains...\n")
 
     # your code...
     return display_board(planet_number,listOfString,position,python_planet)
@@ -347,7 +427,12 @@ def amazing_explosions(listOfString,planet_lst,planet_fuel,planet_rocks,pos,pyth
 
 #========================================================================#
 import random as r
+import turtle as t
+import math as m
 
+fuel_amount = 1
+game_count = 0
+win_count = 0
 mild_count = 0
 amazing_count = 0
 max_turns = 1000000
@@ -367,6 +452,7 @@ planet_rocks = (create_lists_board(listOfString))[2]
 python_planet = 0
 if yes_no == "y":   
     show_board("just created")
+
 python_planet = int(input("Which position should python planet be? (0-" + str(len(planet_number)-1) + ") 0 no affect"))
 while not(str(python_planet).isdigit()) or python_planet <0 or python_planet > (len(planet_number)-1):
     if not(python_planet.isdigit):
@@ -375,40 +461,65 @@ while not(str(python_planet).isdigit()) or python_planet <0 or python_planet > (
         python_planet = int(input("That value is not within the valid range. Please try again: "))
     
 
-while yes_no == "y" and turn_counter <= int(max_turns):
-    
-    if turn_counter == 1:
-        name, civ_lvl, fuel_amount, max_turns, amaz_expl, mild_expl, position = game_info()
+while yes_no.lower() == "y":
+    while turn_counter <= int(max_turns) and int(fuel_amount) > 0 and position != python_planet:
 
-    show_board("Commencing turn number " + str(turn_counter))
+        if turn_counter == 1:
+            data = file()
+            listStrings = read_string_list_from_file(data)
+            listOfString = convert_to_list(listStrings)
+        
+            planet_number = planet_num(listOfString)
+            planet_civ_level = (create_lists_board(listOfString))[0]
+            planet_fuel = (create_lists_board(listOfString))[1]
+            planet_rocks = (create_lists_board(listOfString))[2]
+            display_board(planet_number,listOfString,position, python_planet)
+            name, civ_lvl, fuel_amount, max_turns, amaz_expl, mild_expl, position = game_info()
     
-    turn(name, civ_lvl, position, fuel_amount, max_turns, mild_expl, amaz_expl, listOfString, rock_counter)
-
-    if amaz_expl.lower() == "y" and position >0:
-        result = amazing_explosions(listOfString,planet_number,planet_fuel,planet_rocks,position,python_planet)
-        python_planet = result[2]
-        position = result[3]
-        print(position)
-        planet_number = result[1]
-        planet_rocks = result[0]
-        mild_expl = "n"
-    elif amaz_expl.lower() == "y" and position == 0:
-        result = amazing_explosions(listOfString,planet_number,planet_fuel,planet_rocks,position,python_planet)
-        planet_number = result[1]
-        planet_rocks = result[0]
-        mild_expl = "n"
-    if mild_expl.lower() == "y":
-        mild_explosions(listOfString,planet_number,planet_rocks)
-    position = movement(planet_number, position)
+        display_board(planet_number,listOfString,position, python_planet)
     
-    fuel_amount = encounter(fuel_amount, civ_lvl, position, planet_fuel, planet_civ_level)
-    if fuel_amount == 0:
-        print("You ran out of fuel!")
-        break
+        turn(name, civ_lvl, position, fuel_amount, max_turns, mild_expl, amaz_expl, listOfString, rock_counter)
 
-    rock_counter = rock_collection(position, rock_counter, planet_rocks)
+        if amaz_expl.lower() == "y" and position > 0:
+            result = amazing_explosions(listOfString,planet_number,planet_fuel,planet_rocks,position,python_planet)
+            python_planet = result[2]
+            position = result[3]
+            print(position)
+            planet_number = result[1]
+            planet_rocks = result[0]
+            mild_expl = "n"
+        elif amaz_expl.lower() == "y" and position == 0:
+            result = amazing_explosions(listOfString,planet_number,planet_fuel,planet_rocks,position,python_planet)
+            planet_number = result[1]
+            planet_rocks = result[0]
+            mild_expl = "n"
+        if mild_expl.lower() == "y":
+            mild_explosions(listOfString,planet_number,planet_rocks)
 
-    turn_counter += 1
-    
-if yes_no == 'y':
-    print("Oh no, youve reached the max amount of turns.")
+        position = movement(planet_number, position)
+        if position != python_planet:
+            fuel_amount = encounter(fuel_amount, civ_lvl, position, planet_fuel, planet_civ_level)
+
+            if int(fuel_amount) > 0:
+                rock_counter = rock_collection(position, rock_counter, planet_rocks)
+            else:
+                game_count += 1
+                yes_no, turn_counter, fuel_amount, position, rock_counter = end_of_game(name, civ_lvl, position, fuel_amount, rock_counter, max_turns, turn_counter, python_planet) 
+
+        else:
+            print("WOW! The astronaut reached Python Planet and the game is now over!")
+            game_count += 1
+            win_count += 1
+            yes_no, turn_counter, fuel_amount, position, rock_counter = end_of_game(name, civ_lvl, position, fuel_amount, rock_counter, max_turns, turn_counter, python_planet)
+
+        if turn_counter == int(max_turns):
+            game_count += 1    
+            yes_no, turn_counter, fuel_amount, position, rock_counter = end_of_game(name, civ_lvl, position, fuel_amount, rock_counter, max_turns, turn_counter, python_planet)
+
+        turn_counter += 1
+
+end_of_all_games(game_count, win_count)
+newList = binaryList(planet_rocks)
+num = toBase10(newList)
+
+print("Which converted to decimal is "+ str(num) + ".")
