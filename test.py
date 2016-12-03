@@ -88,13 +88,14 @@ def encounter(fuel_amount, civ_lvl, position, fuel_list, alienlvl_list):
                 loss_gain = r.randint(1, fuel_list[position])
             fuel_list[position] -= loss_gain
             print("He won " + str(loss_gain) + " fuel litres.")
-            print("Planet " + str(position) + " now has " + str(fuel_list[position]) + " litres.")
+            print("Planet " + str(position) + " now has " + str(listOfString[position][1]) + " litres.")
             fuel_amount += loss_gain
             print("\n\nThe astronaut now has " + str(fuel_amount) + " fuel litres.")
+            listOfString[position][1] -= loss_gain
         #This case is where the astronaut has a draw
         elif int(civ_lvl) == alien_lvl:
             print("\nOh well... the astronaut is equally as civilized as the aliens")
-            if int((round(fuel_amount/2))):
+            if int((round(fuel_amount/2)))== 0:
                 loss_gain = 0
             else:
                 loss_gain = r.randint(1, int((round(fuel_amount/2))))
@@ -117,9 +118,10 @@ def encounter(fuel_amount, civ_lvl, position, fuel_list, alienlvl_list):
             loss_gain = r.randint(1, fuel_list[position])
         fuel_list[position] += loss_gain
         print("He won " + str(loss_gain) + " fuel litres.")
-        print("Planet " + str(position) + " now has" + str(fuel_list[position]) + " litres.")
+        print("Planet " + str(position) + " now has " + str(listOfString[position][1]) + " litres.")
         fuel_amount += loss_gain
         print("\n\nThe astronaut now has " + str(fuel_amount) + " fuel litres.")
+        listOfString[position][1] -= loss_gain
     return fuel_amount
 
 def rock_collection(position, rock_counter, rock_list):
@@ -129,8 +131,9 @@ def rock_collection(position, rock_counter, rock_list):
         rock_counter.append(round(rock_list[position]/3))
         print("\nYay! The astronaut collected " + str(round(rock_list[position]/3)) + " rocks!")
         print("His rock collection is now " + str(rock_counter))
-        print("The planet " + str(position) + " now has " + str(rock_list[position] - round(rock_list[position]/3)) + " rocks.")
-    return rock_counter
+        print("The planet " + str(position) + " now has " + str(listOfString[position][2] - round(rock_list[position]/3)) + " rocks.")
+    listOfString[position][2] -= round(rock_list[position]/3)
+    return rock_counter, rock_list
     
 def turn(name, civ_lvl, position, fuel_amount, max_turns, mild_expl, amaz_expl, listOfString, rock_counter): 
     print("Now showing the astronaut. Commencing turn number " + str(turn_counter))
@@ -258,7 +261,7 @@ def read_string_list_from_file(the_file):
 
 def file():
     file = input("\nType the name of the board file including '.txt' or type d for default :")
-    while (file.lower() != "d" or file.find(".txt") == -1):
+    while (file.lower() != "d" and file.find(".txt") == -1):
         file = input("You did not type the file name correctly. Try again: ")
     if file.lower() == "d":
         res = "planetsData1.txt"
@@ -461,10 +464,11 @@ while not(str(python_planet).isdigit()) or python_planet <0 or python_planet > (
         python_planet = int(input("That is not a positive integer. Please try again: "))
     else:
         python_planet = int(input("That value is not within the valid range. Please try again: "))
-    
+if python_planet == 0:
+    python_planet = int(-1)
 
 while yes_no.lower() == "y":
-    while turn_counter <= int(max_turns) and int(fuel_amount) > 0 and position != python_planet:
+    while turn_counter <= int(max_turns) and int(fuel_amount) > 0:
 
         if turn_counter == 1:
             data = file()
@@ -503,7 +507,7 @@ while yes_no.lower() == "y":
             fuel_amount = encounter(fuel_amount, civ_lvl, position, planet_fuel, planet_civ_level)
 
             if int(fuel_amount) > 0:
-                rock_counter = rock_collection(position, rock_counter, planet_rocks)
+                rock_counter, rock_list = rock_collection(position, rock_counter, planet_rocks)
             else:
                 game_count += 1
                 yes_no, turn_counter, fuel_amount, position, rock_counter = end_of_game(name, civ_lvl, position, fuel_amount, rock_counter, max_turns, turn_counter, python_planet) 
@@ -525,3 +529,4 @@ newList = binaryList(planet_rocks)
 num = toBase10(newList)
 
 print("Which converted to decimal is "+ str(num) + ".")
+print("Goodbye!")

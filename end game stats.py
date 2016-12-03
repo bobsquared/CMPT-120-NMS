@@ -85,4 +85,20 @@ end_of_game(name, civ_lvl, position, fuel_amount, rock_counter, max_turns, turn_
 
 
     
-    
+if amaz_expl.lower() == "y" and position >0:
+        result = amazing_explosions(listOfString,planet_number,planet_fuel,planet_rocks,position,python_planet)
+        python_planet = result[2]
+        position = result[3]
+        print(position)
+        planet_number = result[1]
+        planet_rocks = result[0]
+        mild_expl = "n"
+    elif amaz_expl.lower() == "y" and position == 0:
+        result = amazing_explosions(listOfString,planet_number,planet_fuel,planet_rocks,position,python_planet)
+        planet_number = result[1]
+        planet_rocks = result[0]
+        mild_expl = "n"
+    if mild_expl.lower() == "y":
+        mild_explosions(listOfString,planet_number,planet_rocks)
+    position = movement(planet_number, position)
+
