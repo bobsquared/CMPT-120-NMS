@@ -258,6 +258,8 @@ def read_string_list_from_file(the_file):
 
 def file():
     file = input("\nType the name of the board file including '.txt' or type d for default :")
+    while (file.lower() != "d" or file.find(".txt") == -1):
+        file = input("You did not type the file name correctly. Try again: ")
     if file.lower() == "d":
         res = "planetsData1.txt"
     else:
