@@ -247,7 +247,7 @@ def create_lists_board(listStrings):
 
             
             
-def display_board(planet_number,lst,pos):
+def display_board(planet_number,lst,pos,python_planet):
     result = "Planet#            CivLevel          Fuel               Rocks \n"
     for i in range(len(lst)):
         result += str(planet_number[i]) 
@@ -256,8 +256,10 @@ def display_board(planet_number,lst,pos):
                 result += "                  " + str(lst[i][k])
             else:
                 result += "                 " + str(lst[i][k])
+        if python_planet == i:
+            result += "       <===== Python Planet     "
         if planet_number[i] == pos:
-            result += "       <===== Astronaught Position\n"
+            result += "       <===== Astronaut Position\n"
         else:
             result += "\n"
     print (result)
@@ -282,7 +284,7 @@ def show_board(title):
     print ("\n The board at this point contains...")
 
     # your code...
-    return display_board(planet_number,listOfString,pos)
+    return display_board(planet_number,listOfString,pos,python_planet)
 
 def file():
     file = input("Type the name of the board file including '.txt' or type d for default : ")
@@ -485,7 +487,7 @@ import random as r
 import turtle as t
 
 
-    
+python_planet = 5    
 
 amazing_count = 0
 mild_count = 0
