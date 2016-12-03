@@ -290,13 +290,16 @@ def mild_explosions(listOfString,planet_lst,planet_rocks):
     random = (r.randint(1,len(planet_lst)*5))
     for i in range(len(planet_lst)-1):
         if (random == (i+1)):
-            print("Oooooh! A mild or amazing explosion is happening in planet # " + str(i+1) + " \n the board will have more rock specimens!")
+            print("\nOooooh! A mild or amazing explosion is happening in planet # " + str(i+1) + " \n the board will have more rock specimens!")
             mild_count += 1
             planet_position = (i+1)
     for i in range(planet_position):
         for k in range(planet_position,i,-1):
             planet_rocks[i] = planet_rocks[i] + planet_rocks[k]
     replace_rocks(planet_rocks,listOfString)
+    if (random == (i+1)):
+        print("\nShowing the board after the mild explosion.")
+        display_board(planet_number,listOfString,position)
     return planet_rocks
 
 def amazing_explosions(listOfString,planet_lst,planet_fuel,planet_rocks):
@@ -332,6 +335,8 @@ def amazing_explosions(listOfString,planet_lst,planet_fuel,planet_rocks):
 #========================================================================#
 import random as r
 
+mild_count = 0
+amazing_count = 0
 max_turns = 1000000
 turn_counter = 1
 position = 0
@@ -358,6 +363,12 @@ while yes_no == "y" and turn_counter <= int(max_turns):
     display_board(planet_number,listOfString,position)
     
     turn(name, civ_lvl, position, fuel_amount, max_turns, mild_expl, amaz_expl, listOfString, rock_counter)
+
+    if amaz_expl.lower() == "y" and mild_expl == "y":
+        amazing_explosions(listOfString,planet_number,planet_fuel,planet_rocks)
+    
+    if mild_expl.lower() == "y":
+        mild_explosions(listOfString,planet_number,planet_rocks)
 
     position = movement(planet_number, position)
     

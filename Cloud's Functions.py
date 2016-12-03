@@ -166,4 +166,5 @@ def turn(name, civ_lvl, position, fuel_amount, max_turns, mild_expl, amaz_expl, 
 import random as r
 
 start_game()
-
+while yes_no == "y":
+    #show the board here
