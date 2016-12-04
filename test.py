@@ -21,7 +21,7 @@ def game_info():  #The initial 5 questions about the game collected all in one f
 #This determines your initial fuel amount
     fuel_amount = int(input("\nHow much fuel do you start with? (10 - 50): "))
     while (str(fuel_amount).isdigit() == False or int(fuel_amount) < 10 or int(fuel_amount) > 50):
-        if fuel_amount.isdigit() == False:
+        if str(fuel_amount).isdigit() == False:
             fuel_amount = int(input("That is not a positive integer. Please try again: "))
         else:
             fuel_amount = int(input("That value is not within the valid range. Please try again: "))
@@ -74,7 +74,7 @@ def movement(planet_number, position):
     return res
 
 
-def encounter(fuel_amount, civ_lvl, position, fuel_list, alienlvl_list):
+def encounter(fuel_amount, civ_lvl, position, alienlvl_list):
     alien_lvl = alienlvl_list[position]
         #This section is executed if there are aliens on the planet
     if int(alien_lvl) > 0:
@@ -82,16 +82,16 @@ def encounter(fuel_amount, civ_lvl, position, fuel_list, alienlvl_list):
         #This case is where the astronaut wins
         if int(civ_lvl) > alien_lvl:
             print("\nGreat! The astronaut is more civilized than the aliens!")
-            if fuel_list[position] == 0:
+            if listOfString[position][1] == 0:
                 loss_gain = 0
             else:
-                loss_gain = r.randint(1, fuel_list[position])
-            fuel_list[position] -= loss_gain
+                loss_gain = r.randint(1, listOfString[position][1])
+            listOfString[position][1] -= loss_gain
             print("He won " + str(loss_gain) + " fuel litres.")
             print("Planet " + str(position) + " now has " + str(listOfString[position][1]) + " litres.")
             fuel_amount += loss_gain
             print("\n\nThe astronaut now has " + str(fuel_amount) + " fuel litres.")
-            listOfString[position][1] -= loss_gain
+
         #This case is where the astronaut has a draw
         elif int(civ_lvl) == alien_lvl:
             print("\nOh well... the astronaut is equally as civilized as the aliens")
@@ -112,11 +112,10 @@ def encounter(fuel_amount, civ_lvl, position, fuel_list, alienlvl_list):
     #This section of code executes if there are not aliens on the planet
     else:
         print("\nThere are no aliens on this planet.")
-        if fuel_list[position] == 0:
+        if listOfString[position][1] == 0:
             loss_gain = 0
         else:
-            loss_gain = r.randint(1, fuel_list[position])
-        fuel_list[position] += loss_gain
+            loss_gain = r.randint(1, listOfString[position][1])
         print("He won " + str(loss_gain) + " fuel litres.")
         print("Planet " + str(position) + " now has " + str(listOfString[position][1]) + " litres.")
         fuel_amount += loss_gain
@@ -125,15 +124,15 @@ def encounter(fuel_amount, civ_lvl, position, fuel_list, alienlvl_list):
     return fuel_amount
 
 def rock_collection(position, rock_counter, rock_list):
-    if round(rock_list[position]/3) == 0:
+    if round(listOfString[position][2]) == 0:
         print ("Unfortunately, there were no rocks to collect!")
     else:
-        rock_counter.append(round(rock_list[position]/3))
-        print("\nYay! The astronaut collected " + str(round(rock_list[position]/3)) + " rocks!")
+        rock_counter.append(round(listOfString[position][2]/3))
+        print("\nYay! The astronaut collected " + str(round(listOfString[position][2]/3)) + " rocks!")
         print("His rock collection is now " + str(rock_counter))
-        print("The planet " + str(position) + " now has " + str(listOfString[position][2] - round(rock_list[position]/3)) + " rocks.")
-    listOfString[position][2] -= round(rock_list[position]/3)
-    return rock_counter, rock_list
+        print("The planet " + str(position) + " now has " + str(listOfString[position][2] - round(listOfString[position][2]/3)) + " rocks.")
+    listOfString[position][2] -= round(listOfString[position][2]/3)
+    return rock_counter
     
 def turn(name, civ_lvl, position, fuel_amount, max_turns, mild_expl, amaz_expl, listOfString, rock_counter): 
     print("Now showing the astronaut. Commencing turn number " + str(turn_counter))
@@ -361,16 +360,6 @@ def planet_num(a):
     return res
 
 
-def roll_die(pos,planet_number):
-    rand = r.randint(1,6)
-    res = rand + pos
-    while res >= len(planet_number):
-        res -= len(planet_number)
-    print("the die was... " + str(rand))
-    print("the previous position was... " + str(pos))
-    print("and the next position is... " + str(res))
-    return res
-
 
 
 def replace_rocks(planet_rocks,listOfString):
@@ -392,13 +381,16 @@ def mild_explosions(listOfString,planet_lst,planet_rocks):
         for k in range(planet_position,i,-1):
             planet_rocks[i] = planet_rocks[i] + planet_rocks[k]
     replace_rocks(planet_rocks,listOfString)
-    if (random == (i+1)):
+    if (planet_position > 0):
+        print("\n\nOh oh! An amazing explosion occured in planet # " + str(planet_position) + "\n")
         show_board("after mild explosion")
     return planet_rocks
 
-def amazing_explosions(listOfString,planet_lst,planet_fuel,planet_rocks,pos,python_planet):
+def amazing_explosions(listOfString,planet_lst,planet_fuel,planet_rocks,pos,python_planet,):
     global amazing_count
     planet_position = 0
+    engame = 0
+    check = 0
     random = (r.randint(1,len(planet_lst)*5))
     for i in range(len(planet_lst)-1):
         if (random == (i+1)):
@@ -409,20 +401,138 @@ def amazing_explosions(listOfString,planet_lst,planet_fuel,planet_rocks,pos,pyth
         for k in range(planet_position,i,-1):
             planet_rocks[i] = planet_rocks[i] + planet_rocks[k]
     replace_rocks(planet_rocks,listOfString)
-    if planet_position > 0:
+    if planet_position > 0 and planet_position != pos and planet_position < pos and planet_position < python_planet:
+        pos -=1
+        python_planet -=1
         del planet_rocks[planet_position]
         del listOfString[planet_position]
         planet_lst = planet_num(listOfString)
-        pos -=1
-        python_planet -=2
         print("\n\nOh oh! An amazing explosion occured in planet # " + str(planet_position) + "\nThis planet will dissapear!\nand the board shrunk\nbut the astronaut was not there and it did not affect his position...")
-        show_board("after amazing explosion")
+        check += 1
+    elif planet_position == pos:
+        engame = 1
+    elif planet_position > 0 and planet_position != pos and planet_position > pos and planet_position > python_planet:
+        del planet_rocks[planet_position]
+        del listOfString[planet_position]
+        planet_lst = planet_num(listOfString)
+        print("\n\nOh oh! An amazing explosion occured in planet # " + str(planet_position) + "\nThis planet will dissapear!\nand the board shrunk\nbut the astronaut was not there and it did not affect his position...")
+        check += 1
+    elif planet_position > 0 and planet_position != pos and planet_position < pos and planet_position > python_planet:
+        pos -=1
+        del planet_rocks[planet_position]
+        del listOfString[planet_position]
+        planet_lst = planet_num(listOfString)
+        print("\n\nOh oh! An amazing explosion occured in planet # " + str(planet_position) + "\nThis planet will dissapear!\nand the board shrunk\nbut the astronaut was not there and it did not affect his position...")
+        check += 1
+    elif planet_position > 0 and planet_position != pos and planet_position > pos and planet_position < python_planet:
+        python_planet -=1
+        del planet_rocks[planet_position]
+        del listOfString[planet_position]
+        planet_lst = planet_num(listOfString)
+        print("\n\nOh oh! An amazing explosion occured in planet # " + str(planet_position) + "\nThis planet will dissapear!\nand the board shrunk\nbut the astronaut was not there and it did not affect his position...")
+        check += 1
     
-    return [planet_rocks,planet_lst,python_planet,pos]
+    return [planet_rocks,planet_lst,python_planet,pos,endgame,check]
 
 
 
+def drawPlanet(lis):
+    t.pencolor(determinePlanetOutlineColour(lis))
+    t.fillcolor(determinePlanetFillColour(lis))
+    t.begin_fill()
+    for i in range(2):
+        t.forward(50)
+        t.left(90)
+        t.forward(100)
+        t.left(90)
+    t.end_fill()
 
+def drawSpace():
+    t.penup()
+    t.forward(70)
+    t.pendown()
+
+def drawAllPlanets(lis):
+    t.speed(0)
+    startPos(len(lis))
+    for i in range(len(lis)):
+        drawPlanet(lis[i])
+        drawSpace()
+
+def drawAstro(planets, pos, fuel):
+    t.penup()
+    t.fillcolor(determineShipColour(fuel))
+    t.backward(70*(planets-pos))
+    t.right(90)
+    t.forward(150)
+    t.left(90)
+    t.forward(25)
+    t.pencolor("black")
+    t.pendown()
+    t.begin_fill()
+    t.circle(25)
+    t.end_fill()
+
+def startPos(n):
+    t.penup()
+    space = 0
+    if((n%2)==0):
+        space = n/2
+        t.backward((space*50)+((space-1)*20)+10)
+    else:
+        space = n//2
+        t.backward((space*50)+(space*20)+25)
+    t.pendown()
+    '''space = (n-1)*50 + 25
+    t.backward(space)
+    t.pendown()'''
+
+def determinePlanetFillColour(lis):
+    colour = (0, 0, 0)
+    value = lis[2] * 17
+    if(value < 1):
+        colour = (0, 0, 0)
+    elif(value < 255):
+        colour = (0, value, 0)
+    elif(value < 455):
+        colour = ((value - 255), 255, (value - 255))
+    else:
+        colour = (200, 255, 200)
+    return colour
+
+def determinePlanetOutlineColour(lis):
+    colour = ""
+    if(lis[1] > 0):
+        colour = "orange"
+    else:
+        colour = "black"
+    return colour
+
+def determineShipColour(fuel):
+    colour = ""
+    if(fuel < 1):
+        colour = "red"
+    elif(fuel < 10):
+        colour = "yellow"
+    else:
+        colour = "green"
+    return colour
+
+def clearBoard():
+    t.reset()
+
+#Planets is the matrix of planets, pos is the position of the player,
+#fuel is the amount of fuel the player has
+def drawBoard(planets, pos, fuel):
+    t.colormode(255)
+    t.pensize(5)
+    drawAllPlanets(planets)
+    drawAstro(len(planets), pos, fuel)
+
+
+#Test case for drawBoard()
+#drawBoard([[0, 0, 0],[1, 10, 20],[3, 10, 15],[2, 30, 20],[1, 0, 5],
+#           [1, 10, 6],[3, 10, 30],[3, 10, 4]], 0, 10)
 
 
 
@@ -443,6 +553,7 @@ amazing_count = 0
 max_turns = 1000000
 turn_counter = 1
 position = 0
+endgame = 0
 rock_counter = []
 
 listStrings = read_string_list_from_file("planetsData1.txt")
@@ -455,10 +566,11 @@ planet_civ_level = (create_lists_board(listOfString))[0]
 planet_fuel = (create_lists_board(listOfString))[1]
 planet_rocks = (create_lists_board(listOfString))[2]
 python_planet = 0
+check = 0
 if yes_no == "y":   
     show_board("just created")
 
-python_planet = int(input("Which position should python planet be? (0-" + str(len(planet_number)-1) + ") 0 no affect"))
+python_planet = int(input("Which position should python planet be? (0-" + str(len(planet_number)-1) + ") 0 has no affect: "))
 while not(str(python_planet).isdigit()) or python_planet <0 or python_planet > (len(planet_number)-1):
     if not(python_planet.isdigit):
         python_planet = int(input("That is not a positive integer. Please try again: "))
@@ -481,33 +593,45 @@ while yes_no.lower() == "y":
             planet_rocks = (create_lists_board(listOfString))[2]
             display_board(planet_number,listOfString,position, python_planet)
             name, civ_lvl, fuel_amount, max_turns, amaz_expl, mild_expl, position = game_info()
-    
+        planet_number = planet_num(listOfString)
+        planet_civ_level = (create_lists_board(listOfString))[0]
+        planet_fuel = (create_lists_board(listOfString))[1]
+        planet_rocks = (create_lists_board(listOfString))[2]
         display_board(planet_number,listOfString,position, python_planet)
-    
+        
         turn(name, civ_lvl, position, fuel_amount, max_turns, mild_expl, amaz_expl, listOfString, rock_counter)
 
         if amaz_expl.lower() == "y" and position > 0:
             result = amazing_explosions(listOfString,planet_number,planet_fuel,planet_rocks,position,python_planet)
             python_planet = result[2]
             position = result[3]
-            print(position)
             planet_number = result[1]
             planet_rocks = result[0]
+            endgame = result[4]
+            check = result[5]
+            if check == 1:
+                show_board("after amazing explosion")
             mild_expl = "n"
         elif amaz_expl.lower() == "y" and position == 0:
             result = amazing_explosions(listOfString,planet_number,planet_fuel,planet_rocks,position,python_planet)
             planet_number = result[1]
             planet_rocks = result[0]
+            endgame = result[4]
+            check = result[5]
+            if check == 1:
+                show_board("after amazing explosion")
             mild_expl = "n"
         if mild_expl.lower() == "y":
-            mild_explosions(listOfString,planet_number,planet_rocks)
-
+            mild_explosions(listOfString, planet_number, planet_rocks)
+        
         position = movement(planet_number, position)
+        clearBoard()
+        drawBoard(listOfString,position,fuel_amount)
         if position != python_planet:
-            fuel_amount = encounter(fuel_amount, civ_lvl, position, planet_fuel, planet_civ_level)
+            fuel_amount = encounter(fuel_amount, civ_lvl, position, planet_civ_level)
 
             if int(fuel_amount) > 0:
-                rock_counter, rock_list = rock_collection(position, rock_counter, planet_rocks)
+                rock_counter = rock_collection(position, rock_counter, planet_rocks)
             else:
                 game_count += 1
                 yes_no, turn_counter, fuel_amount, position, rock_counter = end_of_game(name, civ_lvl, position, fuel_amount, rock_counter, max_turns, turn_counter, python_planet) 
@@ -521,7 +645,9 @@ while yes_no.lower() == "y":
         if turn_counter == int(max_turns):
             game_count += 1    
             yes_no, turn_counter, fuel_amount, position, rock_counter = end_of_game(name, civ_lvl, position, fuel_amount, rock_counter, max_turns, turn_counter, python_planet)
-
+        if endgame == 1:
+            game_count += 1    
+            yes_no, turn_counter, fuel_amount, position, rock_counter = end_of_game(name, civ_lvl, position, fuel_amount, rock_counter, max_turns, turn_counter, python_planet)
         turn_counter += 1
 
 end_of_all_games(game_count, win_count)
