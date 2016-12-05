@@ -65,7 +65,7 @@ def game_info():  #The initial 5 questions about the game collected all in one f
     return name, civ_lvl, fuel_amount, max_turns, amaz_expl, mild_expl, position, proportion
 
 def movement(planet_number, position):
-        #This part asks rhe user if he would like to roll the die or choose the noext position
+        #This part asks rhe user if he would like to roll the die or choose the next position
     selection = input("\nWould you like to roll the die, or select your next position? (d/u): ")
     while (selection.lower() != "d" and selection.lower() != "u"):
         selection = input("What you typed is not d or u. Please try again: ")
@@ -146,6 +146,8 @@ def encounter(fuel_amount, civ_lvl, position, alienlvl_list):
     return fuel_amount
 
 def rock_collection(position, rock_counter, rock_list):
+    #This function decides the amount of rocks added to the astronaut's collection after his encounter with the aliens. If he runs out of fuel from the encounter,
+    #this function should not execute
     if round(listOfString[position][2]) == 0:
         print ("Unfortunately, there were no rocks to collect!")
     else:
@@ -157,6 +159,7 @@ def rock_collection(position, rock_counter, rock_list):
     return rock_counter
     
 def turn(name, civ_lvl, position, fuel_amount, max_turns, mild_expl, amaz_expl, listOfString, rock_counter): 
+    #This function recaps the information for the player and tells them which turn they are baout to play
     print("Now showing the astronaut. Commencing turn number " + str(turn_counter))
     print("\nThe astronaut " + name + "'s civilation level is " + str(civ_lvl))
     print("Right now, he is in position " + str(position))
@@ -166,18 +169,23 @@ def turn(name, civ_lvl, position, fuel_amount, max_turns, mild_expl, amaz_expl, 
     return
 
 def end_of_game(name, civ_lvl, position, fuel_amount, rock_counter, max_turns, turn_counter, python_planet, mild_count, amazing_count, game_count, endgame):
+    #This function is called when the astronaut is stranded, dies, reaches python planet, or runs out of turns
+    #Case where astronaut ran out of fuel or explodes with python planet
     if endgame != 2 and endgame != 3:
         print("\n RESULTS END OF GAME\n\nThe game number " + str(game_count) + " just took place\nThe game ended because the astronaut got stranded or died")
+    #Case where the player reaches the max amount of turns
     elif endgame == 3:
         print("\n RESULTS END OF GAME\n\nThe game number " + str(game_count) + " just took place\nThe game ended because the astronaut ran out of turns")
+    #Case where the astronaut wins by reaching Python Planet
     else:
         print("\n RESULTS END OF GAME\n\nThe game number " + str(game_count) + " just took place\nThe game ended because the astronaut landed on python planet!")
     show_board("end of game")
+    #This section is the end game recap
     print("Showing astronaut ... end of game")
     print("\nThe astronaut " + name + " has civilization level " + str(civ_lvl))
     print("He is in position: " + str(position))
     print("and currently has: " + str(fuel_amount) + " fuel litres")
-    print("and collected during the whole game" + str(rock_counter) + " rock specimens.")
+    print("and collected during the whole game " + str(rock_counter) + " rock specimens.")
     if turn_counter == int(max_turns):
         print("So... he is very alive!")
         print("but he cannot move anymore since the game ended!")
@@ -192,6 +200,7 @@ def end_of_game(name, civ_lvl, position, fuel_amount, rock_counter, max_turns, t
     if mild_count >= 0:
         print(str(mild_count) + " mild explosions took place, adding rocks to various planets")
         mild_count = 0
+    #This section asks the user if they want to play again, and if they do, all values get reset to their intial values so the while loop may execute again
     yes_no = input("\nDo you want to play again? (y/n): ")
     while (yes_no.lower() != "y" and yes_no.lower() != "n"):
         yes_no = input("\nWhat you typed was not y or n. Please try again: ")
@@ -204,6 +213,8 @@ def end_of_game(name, civ_lvl, position, fuel_amount, rock_counter, max_turns, t
     return yes_no, turn_counter, fuel_amount, position, rock_counter
 
 def end_of_all_games(game_count, win_count):
+    #This function executes when the user no longer wants to play any additional games.
+    #It tells them the total amount of games they played and the amount of times they won
     print("\nThe user played " + str(game_count) + " games in total")
     print("of those, the astonaut won " + str(win_count))
     print("To conclude, the program will do a conversion from binary to decimal!")
@@ -718,6 +729,8 @@ while yes_no.lower() == "y":
                     yes_no, turn_counter, fuel_amount, position, rock_counter = end_of_game(name, civ_lvl, position, fuel_amount, rock_counter, max_turns, turn_counter, python_planet, mild_count, amazing_count, game_count, endgame) 
 
             else:
+                fuel_amount = 9999
+                rock_counter = 9999
                 print("WOW! The astronaut reached Python Planet and the game is now over!")
                 endgame = 2
                 win_count += 1
