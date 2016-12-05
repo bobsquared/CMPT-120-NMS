@@ -725,6 +725,9 @@ while yes_no.lower() == "y":
                 if int(fuel_amount) > 0:
                     rock_counter = rock_collection(position, rock_counter, planet_rocks)
                 else:
+                    if board_check == "y":
+                        clearBoard()
+                        drawBoard(listOfString,position,fuel_amount)
                     game_count += 1
                     yes_no, turn_counter, fuel_amount, position, rock_counter = end_of_game(name, civ_lvl, position, fuel_amount, rock_counter, max_turns, turn_counter, python_planet, mild_count, amazing_count, game_count, endgame) 
 
