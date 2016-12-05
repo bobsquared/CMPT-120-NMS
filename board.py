@@ -248,14 +248,11 @@ def create_lists_board(listStrings):
             
             
 def display_board(planet_number,lst,pos,python_planet):
-    result = "Planet#            CivLevel          Fuel               Rocks \n"
+    result = "Planet#\t          CivLevel\t  Fuel\t          Rocks \n"
     for i in range(len(lst)):
         result += str(planet_number[i]) 
         for k in range(len(lst[i])):
-            if len(str(lst[i][k])) == 1:
-                result += "                  " + str(lst[i][k])
-            else:
-                result += "                 " + str(lst[i][k])
+            result += "\t          " + str(lst[i][k])
         if python_planet == i:
             result += "       <===== Python Planet     "
         if planet_number[i] == pos:

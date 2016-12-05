@@ -29,7 +29,7 @@ def game_info():  #The initial 5 questions about the game collected all in one f
     fuel_amount = int(fuel_amount)
 #This determines the maximum turns this game can have
     max_turns = input("\nWhat is the maximum amount of turns this game? (1 - 10): ")
-    while (max_turns.isdigit() == False or int(max_turns) < 0 or int(max_turns) > 1000000):
+    while (max_turns.isdigit() == False or int(max_turns) < 0 or int(max_turns) > 10):
         if max_turns.isdigit() == False:
             max_turns = input("That is not a positive integer. Please try again: ")
         else:
@@ -293,7 +293,9 @@ def read_string_list_from_file(the_file):
     return localList
 
 def file():
-    file = input("\nType the name of the board file including '.txt' or type d for default :")
+    #...This function is used to determine which file is used for the game.
+    #...Typing D would give you the default board here.
+    file = input("\nType the name of the board file including '.txt' or type d for default : ")
     while (file.lower() != "d" and file.find(".txt") == -1):
         file = input("You did not type the file name correctly. Try again: ")
     if file.lower() == "d":
@@ -327,20 +329,19 @@ def create_lists_board(listStrings):
         civlevel += [listStrings[i][0]]
         fuel += [listStrings[i][1]]
         rocks += [listStrings[i][2]]
+    #returns the three civlevel,fuel,rocks for further use.
     return [civlevel,fuel,rocks]
 
 
             
             
 def display_board(planet_number,lst,pos,python_planet,endgame):
-    result = "Planet#            CivLevel          Fuel               Rocks \n"
+    #This function draws the board of the game.
+    result = "Planet#\t\t          CivLevel\t\t  Fuel\t\t          Rocks \n"
     for i in range(len(lst)):
         result += str(planet_number[i]) 
         for k in range(len(lst[i])):
-            if len(str(lst[i][k])) == 1:
-                result += "                  " + str(lst[i][k])
-            else:
-                result += "                 " + str(lst[i][k])
+            result += "\t\t          " + str(lst[i][k])
         if python_planet == i and python_planet > 0:
             result += "       <===== Python Planet     "
         if planet_number[i] == pos and endgame != 1:
@@ -364,16 +365,19 @@ def show_board(title):
     print ("\n The board at this point contains...\n")
 
     # your code...
-    return display_board(planet_number,listOfString,position,python_planet,endgame)
-
-
-    
+    #this function is called when the board needs a title while display_board is called when there is no title.
+    #This function calls the display_board function to show the board.
+    display_board(planet_number,listOfString,position,python_planet,endgame)
+    return 
 
 def convert_to_list(a):
+    # This function converts the text file to a list of just the numbers.
+    # It creates a new list without the hyphons. Making a list of a list.
     res = []
     for i in range(len(a)):
         lst = []
         st = ""
+        #This checks to see if a certain part of a string contains a digit. If so, add it to the list.
         for k in range(len(a[i])):
             if a[i][k].isdigit() and not(k == (len(a[i])-1)):
                 st += a[i][k]
@@ -384,27 +388,30 @@ def convert_to_list(a):
                 lst.append(int(st))
                 st = ""
         res += [lst]
+        #returns a list of list
     return res
 
-
 def planet_num(a):
+    #This function returns a list of planet numbers.
+    #So if there are 7 planets it would return [0,1,2,3,4,5,6].
     res = []
     for i in range(len(a)):
         res += [i]
     return res
 
-
-
-
 def replace_rocks(planet_rocks,listOfString):
+    #This function updates the list whenever amazing explosions or mild explosions happens.
+    #It returns a new list where the rocks are updated, and also planet 0 is updated back to [0,0,0]
     for i in range(len(planet_rocks)):
         listOfString[i][2] = planet_rocks[i]
     listOfString[0] = [0,0,0]
     return
             
 def mild_explosions(listOfString,planet_lst,planet_rocks,proportion):
+    #This function makes a mild explosion on the board.
     global mild_count
     planet_position = 0
+    #This part creates random number generator for the mild explosion. The proportion determines how often the explosion happens. 1 being 100% and 5 being 20%.
     random = (r.randint(1,((len(planet_lst)-1)*int(proportion))))
     for i in range(1,len(planet_lst)):
         if (random == (i)):
@@ -414,6 +421,7 @@ def mild_explosions(listOfString,planet_lst,planet_rocks,proportion):
     for i in range(planet_position):
         for k in range(planet_position,i,-1):
             planet_rocks[i] = planet_rocks[i] + planet_rocks[k]
+    #Calls the replace_rocks function to update the list.
     replace_rocks(planet_rocks,listOfString)
     if (planet_position > 0):
         print("\n\nOh oh! A mild explosion occured in planet # " + str(planet_position) + "\n")
@@ -421,10 +429,14 @@ def mild_explosions(listOfString,planet_lst,planet_rocks,proportion):
     return planet_rocks
 
 def amazing_explosions(listOfString,planet_lst,planet_fuel,planet_rocks,pos,python_planet,proportion):
+    #This function makes an amazing explosion on the board.
     global amazing_count
     planet_position = 0
+    #Endgame variable is where the player died from the amazing explosion. If this happens, then it adds one. The top level code then uses it to end the game.
     endgame = 0
+    #Check is where it prints the table again after the explosion. If the explosion happens, then it adds one, which then satisfies the condition to print the table.
     check = 0
+    #This part creates random number generator for the mild explosion. The proportion determines how often the explosion happens. 1 being 100% and 5 being 20%.
     if len(planet_lst) > 1:
         random = (r.randint(1,(len(planet_lst)-1)*int(proportion)))
     for i in range(1,len(planet_lst)):
@@ -435,34 +447,36 @@ def amazing_explosions(listOfString,planet_lst,planet_fuel,planet_rocks,pos,pyth
     for i in range(planet_position):
         for k in range(planet_position,i,-1):
             planet_rocks[i] = planet_rocks[i] + planet_rocks[k]
+    #Calls the replace_rocks function to update the list.
     replace_rocks(planet_rocks,listOfString)
+    ##THESE ARE THE MANY CASES WHERE THE EXPLOSION HAPPENS WHICH DETERMINE WHERE THE PYTHON PLANET POSITION AND PLAYER POSITION IS AFTER THE EXPLOSION.
     if planet_position > 0 and planet_position != pos and planet_position < pos and planet_position < python_planet:
         del planet_rocks[planet_position]
         del listOfString[planet_position]
         planet_lst = planet_num(listOfString)
         pos -=1
         python_planet -=1
-        print("\n\nOh oh! An amazing explosion occured in planet # " + str(planet_position) + "\nThis planet will dissapear!\nand the board shrunk\nbut the astronaut was not there and it did not affect his position...")
+        print("\n\nOh oh! An amazing explosion occured in planet # " + str(planet_position) + "\nThis planet will disappear!\nand the board shrunk\nbut the astronaut was not there and it did not affect his position...")
         check += 1
     elif planet_position > 0 and planet_position == pos:
         del planet_rocks[planet_position]
         del listOfString[planet_position]
         planet_lst = planet_num(listOfString)
-        print("\n\nOh oh! An amazing explosion occured in planet # " + str(planet_position) + "\nThis planet will dissapear!\nand the board shrunk\nbut the astronaut was there and, and died!!!...")
+        print("\n\nOh oh! An amazing explosion occured in planet # " + str(planet_position) + "\nThis planet will disappear!\nand the board shrunk\nbut the astronaut was there and, and died!!!...")
         endgame += 1
         check += 1
     elif planet_position > 0 and planet_position != pos and planet_position > pos and planet_position > python_planet:
         del planet_rocks[planet_position]
         del listOfString[planet_position]
         planet_lst = planet_num(listOfString)
-        print("\n\nOh oh! An amazing explosion occured in planet # " + str(planet_position) + "\nThis planet will dissapear!\nand the board shrunk\nbut the astronaut was not there and it did not affect his position...")
+        print("\n\nOh oh! An amazing explosion occured in planet # " + str(planet_position) + "\nThis planet will disappear!\nand the board shrunk\nbut the astronaut was not there and it did not affect his position...")
         check += 1
     elif planet_position > 0 and planet_position != pos and planet_position < pos and planet_position > python_planet:
         del planet_rocks[planet_position]
         del listOfString[planet_position]
         planet_lst = planet_num(listOfString)
         pos -=1
-        print("\n\nOh oh! An amazing explosion occured in planet # " + str(planet_position) + "\nThis planet will dissapear!\nand the board shrunk\nbut the astronaut was not there and it did not affect his position...")
+        print("\n\nOh oh! An amazing explosion occured in planet # " + str(planet_position) + "\nThis planet will disappear!\nand the board shrunk\nbut the astronaut was not there and it did not affect his position...")
         check += 1
     elif planet_position > 0 and planet_position != pos and planet_position < pos and planet_position == python_planet:
         del planet_rocks[planet_position]
@@ -470,32 +484,30 @@ def amazing_explosions(listOfString,planet_lst,planet_fuel,planet_rocks,pos,pyth
         planet_lst = planet_num(listOfString)
         python_planet = -1
         pos -=1
-        print("\n\nOh oh! An amazing explosion occured in planet # " + str(planet_position) + "\nThis planet will dissapear!\nand the board shrunk\nbut the astronaut was not there and it did not affect his position...")
+        print("\n\nOh oh! An amazing explosion occured in planet # " + str(planet_position) + "\nThis planet will disappear!\nand the board shrunk\nbut the astronaut was not there and it did not affect his position...")
         check += 1
     elif planet_position > 0 and planet_position != pos and planet_position > pos and planet_position < python_planet:
         del planet_rocks[planet_position]
         del listOfString[planet_position]
         planet_lst = planet_num(listOfString)
         python_planet -=1
-        print(python_planet)
-        print("\n\nOh oh! An amazing explosion occured in planet # " + str(planet_position) + "\nThis planet will dissapear!\nand the board shrunk\nbut the astronaut was not there and it did not affect his position...")
+        print("\n\nOh oh! An amazing explosion occured in planet # " + str(planet_position) + "\nThis planet will disappear!\nand the board shrunk\nbut the astronaut was not there and it did not affect his position...")
         check += 1
     elif planet_position > 0 and planet_position == (len(listOfString)-1):
         del planet_rocks[planet_position]
         del listOfString[planet_position]
         planet_lst = planet_num(listOfString)
-        print("\n\nOh oh! An amazing explosion occured in planet # " + str(planet_position) + "\nThis planet will dissapear!\nand the board shrunk\nbut the astronaut was not there and it did not affect his position...")
+        print("\n\nOh oh! An amazing explosion occured in planet # " + str(planet_position) + "\nThis planet will disappear!\nand the board shrunk\nbut the astronaut was not there and it did not affect his position...")
         check +=1
     elif planet_position > 0 and planet_position == python_planet:
         del planet_rocks[planet_position]
         del listOfString[planet_position]
         planet_lst = planet_num(listOfString)
         python_planet = -1
-        print("\n\nOh oh! An amazing explosion occured in planet # " + str(planet_position) + "\nThis planet will dissapear!\nand the board shrunk\nbut the astronaut was not there and it did not affect his position...")
+        print("\n\nOh oh! An amazing explosion occured in planet # " + str(planet_position) + "\nThis planet will disappear!\nand the board shrunk\nbut the astronaut was not there and it did not affect his position...")
         check +=1
+    #Returns a list of lists.
     return [planet_rocks,planet_lst,python_planet,pos,endgame,check]
-
-
 
 def drawPlanet(lis):
     t.pencolor(determinePlanetOutlineColour(lis))
@@ -597,47 +609,38 @@ def drawBoard(planets, pos, fuel):
 
 
 
-
-
-
-
-#========================================================================#
+#==================================TOP LEVEL========================================================================TOP LEVEL======================================#
+#IMPORT MODULES.
 import random as r
 import turtle as t
 import math as m
 
+#This where we initialize our variables.
 fuel_amount = 1
 game_count = 0
 win_count = 0
-max_turns = 1000000
+max_turns = 2
 turn_counter = 1
 position = 0
 proportion = 0
 rock_counter = []
-
-listStrings = read_string_list_from_file("planetsData1.txt")
-listOfString = convert_to_list(listStrings)
-
-yes_no = start_game()
-
-planet_number = planet_num(listOfString)
-planet_civ_level = (create_lists_board(listOfString))[0]
-planet_fuel = (create_lists_board(listOfString))[1]
-planet_rocks = (create_lists_board(listOfString))[2]
 check = 0
 
+#This calls start_game.
+yes_no = start_game()
+#This determines whether the game starts or not.
 if yes_no.lower() == "y":
     board_check = input("\nDo you want to draw the board (for all games)? (y/n): ")
     while not(board_check.isalpha()) or (board_check.lower() != "y" and board_check.lower() != "n"):
         board_check = input("What you typed is not what is expected, please retype\n\nDo you want to draw the board (for all games)? (y/n):  ")
-
+#If the player wants to start, then the while loop starts.
 while yes_no.lower() == "y":
+    #Every time a new game starts, initialize these variables again.
     endgame = 0
     mild_count = 0
     amazing_count = 0
     python_planet = -1
     while turn_counter <= int(max_turns) and int(fuel_amount) > 0 and endgame == 0:
-
         if turn_counter == 1:
             data = file()
             listStrings = read_string_list_from_file(data)
@@ -698,14 +701,13 @@ while yes_no.lower() == "y":
         if amaz_expl.lower() == "n" and mild_expl.lower() == "n":
             amazing_count = -1
             mild_count = -1
-            
-        if endgame == 0:   
-            position = movement(planet_number, position)
-            
+
         if board_check == "y":
             clearBoard()
             drawBoard(listOfString,position,fuel_amount)
+
         if endgame == 0:
+            position = movement(planet_number, position)
             if position != python_planet:
                 fuel_amount = encounter(fuel_amount, civ_lvl, position, planet_civ_level)
 
@@ -727,10 +729,10 @@ while yes_no.lower() == "y":
             game_count += 1    
             yes_no, turn_counter, fuel_amount, position, rock_counter = end_of_game(name, civ_lvl, position, fuel_amount, rock_counter, max_turns, turn_counter, python_planet, mild_count, amazing_count, game_count, endgame)
         turn_counter += 1
+
 if yes_no == "n" and game_count > 0:
     end_of_all_games(game_count, win_count)
     newList = binaryList(planet_rocks)
     num = toBase10(newList)
-
     print("Which converted to decimal is "+ str(num) + ".")
     print("Goodbye!")
